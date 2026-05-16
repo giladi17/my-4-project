@@ -28,7 +28,7 @@ pipeline {
             steps {
                 dir('app') {
                     sh 'pip3 install -r requirements.txt'
-                    sh 'pytest test_app.py'
+                    sh 'python3 -m pytest test_app.py'
                 }
             }
         }

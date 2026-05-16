@@ -19,7 +19,7 @@ pipeline {
             steps {
                 dir('app') {
                     sh 'pip3 install flake8'
-                    sh 'flake8 app.py'
+                    sh 'python3 -m flake8 app.py'
                 }
             }
         }

@@ -75,7 +75,7 @@ resource "aws_instance" "jenkins" {
   instance_type = "t3.micro" # זמין בחינם במסגרת ה-Free Tier
   key_name      = var.key_name
   vpc_security_group_ids = [aws_security_group.jenkins_sg.id]
-
+  iam_instance_profile = aws_iam_instance_profile.app_server_profile.name
   tags = {
     Name = "Jenkins-Server"
   }
@@ -96,4 +96,32 @@ resource "aws_instance" "app" {
 resource "aws_ecr_repository" "app_repo" {
   name                 = "devops-app"
   force_delete        = true # מאפשר למחוק את המאגר בסוף גם אם יש בו תמונות
+}
+# יצירת תפקיד (Role) לשרת האפליקציה
+resource "aws_iam_role" "app_server_role" {
+  name = "app_server_ecr_role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# חיבור פוליסי מובנה של AWS שמאפשר קריאה מ-ECR
+resource "aws_iam_role_policy_attachment" "ecr_read_only" {
+  role       = aws_iam_role.app_server_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+# יצירת פרופיל חיבור לשרת ה-EC2
+resource "aws_iam_instance_profile" "app_server_profile" {
+  name = "app_server_ecr_profile"
+  role = aws_iam_role.app_server_role.name
 }

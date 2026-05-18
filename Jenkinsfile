@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        APP_SERVER_IP = '3.88.172.249'
+        APP_SERVER_IP = '34.204.37.170'
         AWS_REGION = 'us-east-1'
         // החלף את הכתובת למטה בכתובת ה-ECR שהודפסה לך מ-Terraform!
         ECR_URL = '066380525112.dkr.ecr.us-east-1.amazonaws.com/devops-app'

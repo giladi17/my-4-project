@@ -64,14 +64,14 @@ pipeline {
                         credentialsId: 'aws-creds'
                     ]]) {
                         sh """
-                            ssh -o StrictHostKeyChecking=no ubuntu@${APP_SERVER_IP} '
+                            ssh -o StrictHostKeyChecking=no ubuntu@${APP_SERVER_IP} "
                             sudo apt update -y && sudo apt install docker.io awscli -y || true
-                            AWS_ACCESS_KEY_ID=\$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=\$AWS_SECRET_ACCESS_KEY aws ecr get-login-password --region ${AWS_REGION} | sudo docker login --username AWS --password-stdin ${ECR_URL}
+                            AWS_ACCESS_KEY_ID='${AWS_ACCESS_KEY_ID}' AWS_SECRET_ACCESS_KEY='${AWS_SECRET_ACCESS_KEY}' aws ecr get-login-password --region ${AWS_REGION} | sudo docker login --username AWS --password-stdin ${ECR_URL}
                             sudo docker pull ${ECR_URL}:latest
                             sudo docker stop devops-app || true
                             sudo docker rm devops-app || true
                             sudo docker run -d -p 5000:5000 --name devops-app ${ECR_URL}:latest
-                            '
+                            "
                         """
                     }
                 }
